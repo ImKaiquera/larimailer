@@ -4,6 +4,11 @@
     "module": "CommonJS",
     "rootDir": "./src",
     "outDir": "./dist",
+    "paths": {
+      "@env": [
+        "./src/config/env"
+      ]
+    },
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
