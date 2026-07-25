@@ -1,13 +1,23 @@
 {
-  "name": "backend",
+  "name": "send-html-email-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Back-end em TypeScript para o disparador de e-mails LariMailer",
+  "main": "dist/index.js",
+  "author": "Kaique Silva",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs"
+  "dependencies": {
+    "@fastify/cors": "^11.3.0",
+    "dotenv": "^17.4.2",
+    "fastify": "^5.10.0",
+    "nodemailer": "^9.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "@types/nodemailer": "^8.0.1",
+    "tsx": "^4.23.1",
+    "typescript": "^7.0.2"
+  }
 }
