@@ -1,8 +1,8 @@
 {
-  "name": "send-html-email-frontend",
+  "name": "larimailer-frontend",
   "version": "1.0.0",
   "description": "Front-end em React para o disparador de e-mails LariMailer",
-  "author": "Kaique Silva",
+  "author": "Kaiquera",
   "private": true,
   "type": "module",
   "scripts": {

@@ -1,9 +1,9 @@
 {
-  "name": "send-html-email-backend",
+  "name": "larimailer-backend",
   "version": "1.0.0",
   "description": "Back-end em TypeScript para o disparador de e-mails LariMailer",
   "main": "dist/index.js",
-  "author": "Kaique Silva",
+  "author": "Kaiquera",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc"
