@@ -6,7 +6,7 @@
     "outDir": "./dist",
     "paths": {
       "@env": [
-        "./src/config/env"
+        "./src/infra/config/env"
       ]
     },
     "strict": true,
