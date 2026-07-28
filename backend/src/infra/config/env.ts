@@ -12,7 +12,8 @@ if (!process.env.EMAIL_PASSWORD) { throw new Error("[ENV] EMAIL_PASSWORD IS REQU
 export const env = {
     infra: {
         port: Number(process.env.INFRA_PORT),
-        host: process.env.INFRA_HOST
+        host: process.env.INFRA_HOST,
+        vercel: process.env.VERCEL
     },
     email: {
         host: process.env.EMAIL_HOST,
