@@ -2,12 +2,24 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-if (!process.env.PORT) { throw new Error("[ENV] PORT IS REQUIRED!"); };
-if (!process.env.HOST) { throw new Error("[ENV] HOST IS REQUIRED!"); };
+if (!process.env.INFRA_PORT) { throw new Error("[ENV] PORT IS REQUIRED!"); };
+if (!process.env.INFRA_HOST) { throw new Error("[ENV] HOST IS REQUIRED!"); };
+if (!process.env.EMAIL_HOST) { throw new Error("[ENV] EMAIL_HOST IS REQUIRED!"); };
+if (!process.env.EMAIL_PORT) { throw new Error("[ENV] EMAIL_PORT IS REQUIRED!"); };
+if (!process.env.EMAIL_USER) { throw new Error("[ENV] EMAIL_USER IS REQUIRED!"); };
+if (!process.env.EMAIL_PASSWORD) { throw new Error("[ENV] EMAIL_PASSWORD IS REQUIRED!"); };
 
 export const env = {
     infra: {
-        port: Number(process.env.PORT),
-        host: process.env.HOST
+        port: Number(process.env.INFRA_PORT),
+        host: process.env.INFRA_HOST
+    },
+    email: {
+        host: process.env.EMAIL_HOST,
+        port: Number(process.env.EMAIL_PORT),
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
+        }
     }
 } as const;

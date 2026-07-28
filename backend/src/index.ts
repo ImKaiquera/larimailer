@@ -1,6 +1,6 @@
+import { env } from "./infra/config/env";
 import cors from "@fastify/cors";
 import Fastify from "fastify";
-import { env } from "@env";
 
 async function bootstrap() {
     const app = Fastify({ logger: true });
