@@ -212,7 +212,7 @@ function App() {
     try {
       const validEmails = [emailPessoal, emailEmpresa].filter(e => e.trim() !== '');
 
-      const response = await fetch('http://localhost:3000/api/send-email', {
+      const response = await fetch('https://larimailer.vercel.app/api/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
