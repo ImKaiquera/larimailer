@@ -1,13 +1,13 @@
 :root {
-  --primary-glow: conic-gradient(from 180deg at 50% 50%, #2a8af633 0deg, #a853ba33 180deg, #e92a6733 360deg);
-  --bg-color: #0f1117;
-  --glass-bg: rgba(25, 27, 34, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --primary-glow: conic-gradient(from 180deg at 50% 50%, #10b98133 0deg, #34d39933 180deg, #05966933 360deg);
+  --bg-color: #022c22;
+  --glass-bg: rgba(6, 78, 59, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.1);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   --text-primary: #ffffff;
-  --text-secondary: #94a3b8;
-  --accent: #6366f1;
-  --accent-hover: #4f46e5;
+  --text-secondary: #a7f3d0;
+  --accent: #10b981;
+  --accent-hover: #059669;
   --success: #10b981;
   --error: #ef4444;
 }
@@ -20,16 +20,41 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  background-color: var(--bg-color);
+  background-color: #02120e;
   color: var(--text-primary);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(233, 42, 103, 0.15), transparent 25%);
-  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: -150px;
+  background: linear-gradient(-45deg, #064e3b, #111827, #134e4a, #0f172a);
+  background-size: 400% 400%;
+  animation: bgGradientMove 20s ease infinite;
+  filter: blur(120px);
+  z-index: -2;
+  opacity: 0.9;
+}
+
+@keyframes bgGradientMove {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+}
+
+.plexus-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
 }
 
 #root {
@@ -70,7 +95,7 @@ h1 {
   font-size: 2.2rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  background: linear-gradient(to right, #818cf8, #c084fc);
+  background: linear-gradient(to right, #34d399, #10b981);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-align: center;
@@ -126,7 +151,7 @@ input[type="email"]:focus,
 textarea:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
   background: rgba(0, 0, 0, 0.3);
 }
 
@@ -156,7 +181,7 @@ textarea {
 
 .file-upload-wrapper:hover, .file-upload-wrapper.drag-over {
   border-color: var(--accent);
-  background: rgba(99, 102, 241, 0.05);
+  background: rgba(16, 185, 129, 0.05);
 }
 
 .file-upload-wrapper input[type="file"] {
@@ -206,13 +231,13 @@ button.submit-btn {
   padding: 1.2rem;
   border: none;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--accent), #818cf8);
+  background: linear-gradient(135deg, var(--accent), #34d399);
   color: white;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -222,8 +247,8 @@ button.submit-btn {
 
 button.submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
-  background: linear-gradient(135deg, var(--accent-hover), #6366f1);
+  box-shadow: 0 8px 30px rgba(16, 185, 129, 0.7);
+  background: linear-gradient(135deg, var(--accent-hover), #10b981);
 }
 
 button.submit-btn:active {
@@ -293,4 +318,66 @@ button.submit-btn:disabled {
     font-size: 1rem;
     margin-bottom: 1.5rem;
   }
+}
+
+/* Staggered Animations */
+.glass-panel h1 { animation: slideInDown 0.6s ease both; }
+.glass-panel .subtitle { animation: slideInDown 0.8s ease both; }
+.form-group { animation: slideInUp 0.6s ease both; }
+.form-row .form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-row .form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-of-type(2) { animation-delay: 0.3s; }
+.divider { animation: fadeIn 0.8s ease both; animation-delay: 0.4s; }
+.form-group:nth-of-type(3) { animation-delay: 0.5s; }
+.submit-btn { animation: slideInUp 0.6s ease both; animation-delay: 0.6s; }
+
+@keyframes slideInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Custom Cursor */
+body, button, input, textarea, .file-upload-wrapper, a {
+  cursor: none !important;
+}
+
+.custom-cursor-dot {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background-color: var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, background-color 0.2s;
+}
+
+.custom-cursor-outline {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(16, 185, 129, 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, border-color 0.2s, background-color 0.2s;
+}
+
+.custom-cursor-dot.hovered {
+  width: 12px;
+  height: 12px;
+  background-color: #ffffff;
+}
+
+.custom-cursor-outline.hovered {
+  width: 60px;
+  height: 60px;
+  border-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.05);
 }
