@@ -1,7 +1,7 @@
 import { IEmailService } from "../../../modules/emails/application/interfaces/IEmailService";
 import { Email } from "../../../modules/emails/domain/entities/Email";
+import { env } from "../../config/env";
 import nodemailer from "nodemailer";
-import { env } from "@env";
 
 export class NodemailerAdapter implements IEmailService {
     private transporter: nodemailer.Transporter;
