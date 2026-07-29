@@ -259,7 +259,7 @@ function App() {
       <div className="custom-cursor-outline" ref={cursorOutlineRef}></div>
       <canvas ref={canvasRef} className="plexus-canvas"></canvas>
       <div className="glass-panel">
-      <h1>LariMailer - Disparador de E-mail</h1>
+      <h1>LariMailer</h1>
       <p className="subtitle">Feito com 💖 para o meu amor</p>
 
       <form onSubmit={handleSubmit}>
