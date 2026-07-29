@@ -8,21 +8,13 @@ import Fastify from "fastify";
 
 const app = Fastify({ logger: true });
 
-app.register(cors, {
-  origin: "*",
-  methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-});
+app.register(cors, { origin: "*" });
 
 const emailAdapter = new NodemailerAdapter();
 const sendEmailUseCase = new SendEmail(emailAdapter);
 const emailController = new EmailController(sendEmailUseCase);
 
 app.get("/health", async () => {
-  return { message: "UP!" };
-});
-
-app.get("/api/health", async () => {
   return { message: "UP!" };
 });
 
