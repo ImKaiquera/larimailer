@@ -2,10 +2,14 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-if (!process.env.EMAIL_HOST) { throw new Error("[ENV] EMAIL_HOST IS REQUIRED!"); };
-if (!process.env.EMAIL_PORT) { throw new Error("[ENV] EMAIL_PORT IS REQUIRED!"); };
-if (!process.env.EMAIL_USER) { throw new Error("[ENV] EMAIL_USER IS REQUIRED!"); };
-if (!process.env.EMAIL_PASSWORD) { throw new Error("[ENV] EMAIL_PASSWORD IS REQUIRED!"); };
+const EMAIL_HOST = process.env.EMAIL_HOST || "smtp.gmail.com";
+const EMAIL_PORT = Number(process.env.EMAIL_PORT || 587);
+const EMAIL_USER = process.env.EMAIL_USER || "";
+const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || "";
+
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+  console.warn("[ENV WARNING] EMAIL_USER or EMAIL_PASSWORD environment variables are missing!");
+};
 
 export const env = {
     infra: {
@@ -14,11 +18,11 @@ export const env = {
         vercel: process.env.VERCEL
     },
     email: {
-        host: process.env.EMAIL_HOST,
-        port: Number(process.env.EMAIL_PORT),
+        host: EMAIL_HOST,
+        port: EMAIL_PORT,
         auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD
+            user: EMAIL_USER,
+            pass: EMAIL_PASSWORD
         }
     }
 } as const;
