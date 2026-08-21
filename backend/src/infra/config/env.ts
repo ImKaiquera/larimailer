@@ -2,27 +2,54 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const EMAIL_HOST = process.env.EMAIL_HOST || "smtp.gmail.com";
-const EMAIL_PORT = Number(process.env.EMAIL_PORT || 587);
-const EMAIL_USER = process.env.EMAIL_USER || "";
-const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || "";
+const REQUIRED_ENV_VARIABLES = [
+  "INFRA_PORT",
+  "INFRA_HOST",
+  "EMAIL_HOST",
+  "EMAIL_PORT",
+  "EMAIL_USER",
+  "EMAIL_PASSWORD",
+] as const;
 
-if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
-  console.warn("[ENV WARNING] EMAIL_USER or EMAIL_PASSWORD environment variables are missing!");
-};
+type RequiredEnvVariable = typeof REQUIRED_ENV_VARIABLES[number];
+
+const missingVariables = REQUIRED_ENV_VARIABLES.filter(
+  (name) => !process.env[name]?.trim(),
+);
+
+if (missingVariables.length > 0) {
+  throw new Error(
+    `[ENV ERROR] Variáveis obrigatórias ausentes: ${missingVariables.join(", ")}.`,
+  );
+}
+
+function requiredEnv(name: RequiredEnvVariable): string {
+  return process.env[name]!.trim();
+}
+
+function requiredPort(name: "INFRA_PORT" | "EMAIL_PORT"): number {
+  const rawValue = requiredEnv(name);
+  const port = Number(rawValue);
+
+  if (!Number.isInteger(port) || port < 1 || port > 65535) {
+    throw new Error(`[ENV ERROR] ${name} deve ser uma porta válida entre 1 e 65535.`);
+  }
+
+  return port;
+}
 
 export const env = {
-    infra: {
-        port: Number(process.env.INFRA_PORT || 3000),
-        host: process.env.INFRA_HOST || "0.0.0.0",
-        vercel: process.env.VERCEL
+  infra: {
+    port: requiredPort("INFRA_PORT"),
+    host: requiredEnv("INFRA_HOST"),
+    vercel: process.env.VERCEL,
+  },
+  email: {
+    host: requiredEnv("EMAIL_HOST"),
+    port: requiredPort("EMAIL_PORT"),
+    auth: {
+      user: requiredEnv("EMAIL_USER"),
+      pass: requiredEnv("EMAIL_PASSWORD"),
     },
-    email: {
-        host: EMAIL_HOST,
-        port: EMAIL_PORT,
-        auth: {
-            user: EMAIL_USER,
-            pass: EMAIL_PASSWORD
-        }
-    }
+  },
 } as const;

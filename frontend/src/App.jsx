@@ -2,6 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import { UploadCloud, Send, FileCode, FileArchive, Heart, Sparkles, X } from 'lucide-react';
 import Swal from 'sweetalert2';
 
+const API_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, '');
+
+if (!API_URL) {
+  throw new Error('A variável VITE_API_URL não foi configurada.');
+}
+
 function App() {
   const [emailEmpresa, setEmailEmpresa] = useState(() => localStorage.getItem('emailEmpresa') || '');
   const [emailPessoal, setEmailPessoal] = useState(() => localStorage.getItem('emailPessoal') || '');
@@ -183,7 +189,7 @@ function App() {
         };
       }
 
-      const response = await fetch('https://larimailer-backend.vercel.app/api/send-email', requestOptions);
+      const response = await fetch(`${API_URL}/api/send-email`, requestOptions);
 
       if (!response.ok) {
         const errorData = await response.json();
