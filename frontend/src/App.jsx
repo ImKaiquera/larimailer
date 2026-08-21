@@ -17,6 +17,47 @@ function App() {
   const [fileName, setFileName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef(null);
+  const cursorFollowerRef = useRef(null);
+
+  useEffect(() => {
+    const follower = cursorFollowerRef.current;
+    if (!follower || !window.matchMedia('(pointer: fine)').matches) return;
+
+    let animationFrameId;
+    let pointerX = 0;
+    let pointerY = 0;
+
+    const updatePosition = () => {
+      follower.style.translate = `${pointerX + 14}px ${pointerY + 14}px`;
+      animationFrameId = undefined;
+    };
+
+    const handlePointerMove = (event) => {
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+
+      const editingText = event.target.closest('input, textarea, .swal2-container');
+      const interactive = event.target.closest('button, .file-upload-wrapper');
+      follower.classList.toggle('is-hidden', Boolean(editingText));
+      follower.classList.toggle('is-interactive', Boolean(interactive));
+      follower.classList.add('is-visible');
+
+      if (!animationFrameId) {
+        animationFrameId = requestAnimationFrame(updatePosition);
+      }
+    };
+
+    const handlePointerLeave = () => follower.classList.remove('is-visible');
+
+    window.addEventListener('pointermove', handlePointerMove);
+    document.documentElement.addEventListener('mouseleave', handlePointerLeave);
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      document.documentElement.removeEventListener('mouseleave', handlePointerLeave);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -117,6 +158,14 @@ function App() {
 
   return (
     <>
+      <img
+        ref={cursorFollowerRef}
+        className="pucca-cursor-follower"
+        src="/pucca-cursor.png"
+        alt=""
+        aria-hidden="true"
+      />
+
       <div className="floating-decor" aria-hidden="true">
         <Heart className="floating-heart heart-one" fill="currentColor" />
         <Heart className="floating-heart heart-two" fill="currentColor" />
