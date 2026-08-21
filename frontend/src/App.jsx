@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { UploadCloud, Send, FileCode, Heart, Sparkles } from 'lucide-react';
+import { UploadCloud, Send, FileCode, FileArchive, Heart, Sparkles, X } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 function App() {
@@ -14,7 +14,7 @@ function App() {
     localStorage.setItem('emailPessoal', emailPessoal);
   }, [emailPessoal]);
   const [htmlCode, setHtmlCode] = useState('');
-  const [fileName, setFileName] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef(null);
   const cursorFollowerRef = useRef(null);
@@ -59,28 +59,70 @@ function App() {
     };
   }, []);
 
+  const isZipPackage = selectedFile?.name.toLowerCase().endsWith('.zip');
+
+  const formatFileSize = (bytes) => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
+  const clearSelectedFile = () => {
+    setSelectedFile(null);
+    setHtmlCode('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.type !== 'text/html' && !file.name.endsWith('.html')) {
+    const extension = file.name.split('.').pop()?.toLowerCase();
+
+    if (!['html', 'zip'].includes(extension)) {
       Swal.fire({
         icon: 'error',
         title: 'Formato inválido',
-        text: 'Por favor, selecione um arquivo HTML válido.',
+        text: 'Selecione um arquivo HTML ou um pacote ZIP válido.',
         confirmButtonColor: '#e5192f',
         background: '#fffaf3',
         color: '#201919'
       });
+      clearSelectedFile();
       return;
     }
 
-    setFileName(file.name);
+    setSelectedFile(file);
+
+    if (extension === 'zip') {
+      setHtmlCode('');
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (event) => {
       setHtmlCode(event.target.result);
     };
+    reader.onerror = () => {
+      clearSelectedFile();
+      Swal.fire({
+        icon: 'error',
+        title: 'Não foi possível abrir o arquivo',
+        text: 'Tente selecionar o arquivo HTML novamente.',
+        confirmButtonColor: '#e5192f',
+        background: '#fffaf3',
+        color: '#201919'
+      });
+    };
     reader.readAsText(file);
+  };
+
+  const handleHtmlChange = (event) => {
+    if (selectedFile) {
+      setSelectedFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+    setHtmlCode(event.target.value);
   };
 
   const handleSubmit = async (e) => {
@@ -98,11 +140,11 @@ function App() {
       return;
     }
 
-    if (!htmlCode) {
+    if (!htmlCode && !isZipPackage) {
       Swal.fire({
         icon: 'warning',
         title: 'Atenção',
-        text: 'Insira o código HTML ou faça upload de um arquivo.',
+        text: 'Insira o código HTML ou selecione um arquivo HTML/ZIP.',
         confirmButtonColor: '#e5192f',
         background: '#fffaf3',
         color: '#201919'
@@ -114,18 +156,34 @@ function App() {
 
     try {
       const validEmails = [emailPessoal, emailEmpresa].filter(e => e.trim() !== '');
+      const subject = `Novo e-mail em HTML - ${new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}`;
+      let requestOptions;
 
-      const response = await fetch('https://larimailer-backend.vercel.app/api/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          to: validEmails,
-          subject: `Novo e-mail em HTML - ${new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}`,
-          htmlBody: htmlCode
-        })
-      });
+      if (isZipPackage) {
+        const formData = new FormData();
+        formData.append('to', JSON.stringify(validEmails));
+        formData.append('subject', subject);
+        formData.append('file', selectedFile);
+
+        requestOptions = {
+          method: 'POST',
+          body: formData
+        };
+      } else {
+        requestOptions = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            to: validEmails,
+            subject,
+            htmlBody: htmlCode
+          })
+        };
+      }
+
+      const response = await fetch('https://larimailer-backend.vercel.app/api/send-email', requestOptions);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -220,48 +278,70 @@ function App() {
         </div>
 
         <div className="form-group">
-          <label>1. Envie seu arquivo HTML</label>
-          <div 
-            className="file-upload-wrapper" 
-            onClick={() => fileInputRef.current.click()}
-          >
+          <label>1. Envie seu HTML ou pacote ZIP</label>
+          <div className="file-upload-wrapper">
             <input 
               type="file" 
-              accept=".html, text/html" 
+              accept=".html,.zip,text/html,application/zip,application/x-zip-compressed"
               ref={fileInputRef}
               onChange={handleFileUpload}
             />
-            {fileName ? (
+            {selectedFile ? (
               <>
-                <FileCode className="file-upload-icon" style={{ color: 'var(--success)' }} />
+                {isZipPackage
+                  ? <FileArchive className="file-upload-icon" style={{ color: 'var(--success)' }} />
+                  : <FileCode className="file-upload-icon" style={{ color: 'var(--success)' }} />}
                 <span className="file-upload-text" style={{ color: 'var(--success)', fontWeight: 'bold' }}>
-                  {fileName} carregado
+                  {selectedFile.name} carregado
                 </span>
               </>
             ) : (
               <>
                 <UploadCloud className="file-upload-icon" />
-                <span className="file-upload-text">Clique para escolher seu arquivo .html</span>
+                <span className="file-upload-text">Clique para escolher um arquivo .html ou .zip</span>
               </>
             )}
           </div>
+          {selectedFile && (
+            <div className="selected-file-details">
+              <span className={`file-kind-badge ${isZipPackage ? 'zip' : 'html'}`}>
+                {isZipPackage ? 'Pacote ZIP' : 'Arquivo HTML'}
+              </span>
+              <span>{formatFileSize(selectedFile.size)}</span>
+              <button type="button" className="clear-file-btn" onClick={clearSelectedFile} aria-label="Remover arquivo">
+                <X size={14} /> Remover
+              </button>
+            </div>
+          )}
         </div>
 
-        <div className="divider">OU</div>
+        {isZipPackage ? (
+          <div className="zip-package-notice">
+            <FileArchive size={20} />
+            <div>
+              <strong>Pacote pronto para envio</strong>
+              <span>O HTML e suas imagens serão processados juntos pelo servidor.</span>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="divider">OU</div>
 
-        <div className="form-group">
-          <label htmlFor="htmlCode">2. Ou cole seu código HTML</label>
-          <textarea 
-            id="htmlCode"
-            placeholder="<!DOCTYPE html>&#10;<html>&#10;...&#10;</html>"
-            value={htmlCode}
-            onChange={(e) => setHtmlCode(e.target.value)}
-          ></textarea>
-        </div>
+            <div className="form-group">
+              <label htmlFor="htmlCode">2. Ou cole seu código HTML</label>
+              <textarea
+                id="htmlCode"
+                placeholder="<!DOCTYPE html>&#10;<html>&#10;...&#10;</html>"
+                value={htmlCode}
+                onChange={handleHtmlChange}
+              ></textarea>
+            </div>
+          </>
+        )}
 
         <button type="submit" className="submit-btn" disabled={isSubmitting}>
           {isSubmitting ? (
-             <span>Enviando...</span>
+             <span>{isZipPackage ? 'Enviando pacote...' : 'Enviando...'}</span>
           ) : (
             <>
               <Send size={20} />
