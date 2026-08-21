@@ -24,7 +24,15 @@ export class NodemailerAdapter implements IEmailService {
                 from: `"LariMailer" <${env.email.auth.user}>`,
                 to: email.getTo().join(', '),
                 subject: email.getSubject(),
-                html: email.getHtmlBody()
+                html: email.getHtmlBody(),
+                attachDataUrls: true,
+                attachments: email.getAttachments().map((attachment) => ({
+                    filename: attachment.filename,
+                    content: attachment.content,
+                    contentType: attachment.contentType,
+                    cid: attachment.cid,
+                    disposition: "inline"
+                }))
             });
 
             console.log(`[SUCESSO] E-mail enviado para: ${email.getTo().join(', ')}`);
