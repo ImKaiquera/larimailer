@@ -99,7 +99,7 @@ email.zip
     └── logo.png
 ```
 
-As referências no HTML devem apontar para os arquivos do próprio pacote, por exemplo `images/banner.jpg`. Regras e limites completos estão no [README do backend](./backend/README.md#pacotes-zip).
+As referências no HTML devem apontar para os arquivos do pacote por caminhos relativos, como `images/banner.jpg` no exemplo acima. Regras e limites completos estão no [README do backend](./backend/README.md#pacotes-zip).
 
 ## Verificação
 

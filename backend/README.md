@@ -129,7 +129,7 @@ email.zip
     └── detalhe.png
 ```
 
-O backend reconhece referências locais nos atributos `src` e `background`, além de `url(...)` em CSS. URLs HTTP/HTTPS, Data URLs, CIDs, links de e-mail e telefone e âncoras são mantidos como estão.
+O backend resolve os caminhos em relação à localização do HTML e reconhece referências locais nos atributos `src` e `background`, além de `url(...)` em CSS. URLs HTTP/HTTPS, Data URLs, CIDs, links de e-mail e telefone e âncoras são mantidos como estão.
 
 ### Seleção do HTML principal
 
